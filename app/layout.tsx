@@ -1,25 +1,13 @@
-import type { Metadata, Viewport } from "next";
+import type { Metadata } from "next";
 import "./globals.css";
 import { Providers } from "./providers";
 import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
+import { BottomNav } from "@/components/BottomNav";
 
 export const metadata: Metadata = {
-  title: "더블디럭스 — 코인 그대로 쓰는 동네 중고거래",
+  title: "BTC 당근 — 동네 비트코인 중고거래",
   description:
-    "현금화 없이, 가스비·거래소 수수료 없이. 보유한 코인 그대로 우리 동네 중고 물건을 사고팔아요. 판매자는 코인을 쉽고 저렴하게 바로 받습니다.",
-  keywords: ["중고거래", "암호화폐", "코인결제", "더블디럭스", "당근", "web3 마켓"],
-  openGraph: {
-    title: "더블디럭스",
-    description: "현금화 없이, 코인 그대로 쓰는 동네 중고거래 마켓",
-    type: "website",
-  },
-};
-
-export const viewport: Viewport = {
-  themeColor: "#FF6B1A",
-  width: "device-width",
-  initialScale: 1,
+    "당근마켓 스타일 동네 중고거래 데모. 지갑으로 로그인하고, 사진 올려 글쓰고, 채팅하고, 지도로 거래 위치를 확인하세요. 결제는 BTC.",
 };
 
 export default function RootLayout({
@@ -31,11 +19,11 @@ export default function RootLayout({
     <html lang="ko">
       <body>
         <Providers>
-          <div className="flex min-h-screen flex-col">
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </div>
+          <Header />
+          <main className="mx-auto w-full max-w-[1180px] px-4 py-6 pb-24 md:pb-6">
+            {children}
+          </main>
+          <BottomNav />
         </Providers>
       </body>
     </html>
