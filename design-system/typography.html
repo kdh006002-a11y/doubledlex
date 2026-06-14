@@ -1,0 +1,39 @@
+<!-- @dsCard group="Type" -->
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>더블디럭스 · 타이포그래피</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"
+    />
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        margin: 0; padding: 40px; background: #fbfaf8; color: #0b0b12;
+        font-family: Pretendard, system-ui, sans-serif;
+      }
+      .label { color: #6b6b76; font-size: 12px; font-weight: 600; letter-spacing: .04em; }
+      .item { padding: 14px 0; border-bottom: 1px solid #ece8e3; }
+      .display { font-size: 44px; font-weight: 800; letter-spacing: -0.025em; }
+      .h1 { font-size: 30px; font-weight: 800; letter-spacing: -0.02em; }
+      .h2 { font-size: 22px; font-weight: 700; }
+      .body { font-size: 16px; font-weight: 400; color: #3a3a48; }
+      .cap { font-size: 12px; font-weight: 500; color: #6b6b76; }
+      .grad-text {
+        background: linear-gradient(120deg, #ff6b1a, #ff8443 35%, #7c5cff);
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="item"><div class="label">Display · 44 / 800</div><div class="display">코인 그대로 <span class="grad-text">바로 쓰세요</span></div></div>
+    <div class="item"><div class="label">Heading 1 · 30 / 800</div><div class="h1">우리 동네 중고 거래</div></div>
+    <div class="item"><div class="label">Heading 2 · 22 / 700</div><div class="h2">코인으로 결제</div></div>
+    <div class="item"><div class="label">Body · 16 / 400</div><div class="body">거래소를 거쳐 원화로 출금하는 과정 없이, 보유한 코인으로 바로 결제합니다.</div></div>
+    <div class="item" style="border:none"><div class="label">Caption · 12 / 500</div><div class="cap">Sepolia 테스트넷 · 실제 자산이 아닙니다</div></div>
+    <p style="margin-top:24px;color:#6b6b76;font-size:13px">Typeface — <b style="color:#0b0b12">Pretendard</b> (한글 + Latin)</p>
+  </body>
+</html>

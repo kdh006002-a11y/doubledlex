@@ -1,0 +1,97 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #fbfaf8;
+  --surface: #ffffff;
+  --line: #ece8e3;
+  --text: #0b0b12;
+  --text-muted: #6b6b76;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-feature-settings: "cv11", "ss01";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+@layer components {
+  /* 브랜드 그라데이션 텍스트 */
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(120deg, #ff6b1a 0%, #ff8443 35%, #7c5cff 100%);
+  }
+
+  /* 유리(글래스) 카드 — 결제 위젯 등 */
+  .glass {
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  /* 1차 CTA 버튼 */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl bg-brand-gradient px-5 py-3
+           font-semibold text-white shadow-glow transition
+           hover:brightness-105 active:scale-[0.98] disabled:cursor-not-allowed
+           disabled:opacity-40 disabled:shadow-none disabled:brightness-100;
+  }
+
+  /* 보조 버튼 */
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl border border-[var(--line)]
+           bg-white px-5 py-3 font-semibold text-ink transition hover:bg-brand-50
+           active:scale-[0.98];
+  }
+
+  .chip {
+    @apply inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[var(--line)]
+           bg-white px-4 py-2 text-sm font-medium text-ink-muted transition
+           hover:border-brand-300 hover:text-brand-600;
+  }
+
+  .chip-active {
+    @apply border-transparent bg-ink text-white hover:text-white;
+  }
+
+  .card {
+    @apply rounded-3xl border border-[var(--line)] bg-white shadow-soft;
+  }
+
+  /* 로딩 스켈레톤용 셰이머 */
+  .shimmer {
+    @apply relative overflow-hidden bg-brand-50;
+  }
+  .shimmer::after {
+    @apply absolute inset-0 -translate-x-full animate-shimmer;
+    content: "";
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.6),
+      transparent
+    );
+  }
+}
+
+/* 가로 스크롤 영역에서 스크롤바 숨김 */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

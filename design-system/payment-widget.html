@@ -1,0 +1,65 @@
+<!-- @dsCard group="Components" -->
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>더블디럭스 · 결제 위젯</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"
+    />
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        margin: 0; padding: 40px; background: #fbfaf8; color: #0b0b12;
+        font-family: Pretendard, system-ui, sans-serif;
+      }
+      .widget {
+        width: 360px; border: 1px solid #ece8e3; border-radius: 24px; background: #fff; padding: 20px;
+        box-shadow: 0 1px 3px rgba(16,24,40,.06), 0 12px 32px rgba(16,24,40,.08);
+      }
+      .head { display: flex; align-items: center; justify-content: space-between; }
+      .head h3 { margin: 0; font-size: 16px; font-weight: 700; }
+      .net { background: #FFF3EC; color: #C73F06; font-size: 11px; font-weight: 600; padding: 4px 9px; border-radius: 999px; }
+      .seg { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; background: #f5f3f0; border-radius: 16px; padding: 5px; margin-top: 16px; }
+      .seg button { border: none; cursor: pointer; border-radius: 12px; padding: 8px; font-weight: 600; font-size: 14px; background: transparent; color: #6b6b76; }
+      .seg .on { background: #fff; color: #0b0b12; box-shadow: 0 1px 2px rgba(16,24,40,.06); }
+      .pay { border: 1px solid #ece8e3; border-radius: 16px; padding: 16px; margin-top: 12px; }
+      .pay .top { display: flex; justify-content: space-between; font-size: 12px; color: #6b6b76; }
+      .pay .amt { display: flex; align-items: flex-end; justify-content: space-between; margin-top: 8px; }
+      .pay .amt .n { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
+      .tok { background: rgba(124,92,255,.10); color: #5A2FD0; font-weight: 700; font-size: 14px; padding: 6px 12px; border-radius: 999px; }
+      .pay .krw { color: #6b6b76; font-size: 14px; margin-top: 4px; }
+      .to { display: flex; justify-content: space-between; align-items: center; background: #f5f3f0; border-radius: 16px; padding: 12px 16px; margin-top: 12px; font-size: 14px; }
+      .to .av { width: 24px; height: 24px; border-radius: 999px; display: grid; place-items: center; color: #fff; font-size: 10px; background: linear-gradient(135deg,#ff6b1a,#7c5cff); }
+      .cta {
+        width: 100%; border: none; cursor: pointer; border-radius: 16px; padding: 14px; margin-top: 16px;
+        font-weight: 700; font-size: 16px; color: #fff;
+        background: linear-gradient(135deg, #ff6b1a 0%, #ff8443 40%, #7c5cff 100%);
+        box-shadow: 0 12px 40px rgba(124,92,255,.18);
+      }
+      .note { text-align: center; font-size: 11px; color: #6b6b76; margin-top: 12px; line-height: 1.5; }
+    </style>
+  </head>
+  <body>
+    <div class="widget">
+      <div class="head"><h3>코인으로 결제</h3><span class="net">Sepolia</span></div>
+      <div class="seg">
+        <button class="on">Ξ ETH</button>
+        <button>＄ USDC</button>
+      </div>
+      <div class="pay">
+        <div class="top"><span>결제 금액</span><span>잔액 0.4210 ETH</span></div>
+        <div class="amt"><span class="n">0.17708 ETH</span><span class="tok">Ξ ETH</span></div>
+        <div class="krw">≈ ₩850,000</div>
+      </div>
+      <div class="to">
+        <span style="color:#6b6b76">받는 사람 (판매자)</span>
+        <span style="display:flex;align-items:center;gap:8px;font-weight:600"><span class="av">코</span>0xdead…f00d</span>
+      </div>
+      <button class="cta">0.17708 ETH 결제하기</button>
+      <p class="note">구매자 지갑에서 판매자 주소로 직접 송금됩니다. 테스트넷이므로 실제 자산이 아닙니다.</p>
+    </div>
+  </body>
+</html>

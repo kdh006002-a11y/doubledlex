@@ -1,0 +1,54 @@
+<!-- @dsCard group="Components" -->
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>더블디럭스 · 버튼</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"
+    />
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        margin: 0; padding: 40px; background: #fbfaf8; color: #0b0b12;
+        font-family: Pretendard, system-ui, sans-serif;
+      }
+      .label { color: #6b6b76; font-size: 12px; font-weight: 600; margin: 22px 0 10px; }
+      .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+      .btn-primary {
+        border: none; cursor: pointer; border-radius: 16px; padding: 12px 20px;
+        font-weight: 600; color: #fff; font-size: 15px;
+        background: linear-gradient(135deg, #ff6b1a 0%, #ff8443 40%, #7c5cff 100%);
+        box-shadow: 0 12px 40px rgba(124,92,255,.18), 0 4px 16px rgba(255,107,26,.12);
+      }
+      .btn-ghost {
+        border: 1px solid #ece8e3; background: #fff; cursor: pointer; border-radius: 16px;
+        padding: 12px 20px; font-weight: 600; font-size: 15px; color: #0b0b12;
+      }
+      .btn-disabled { opacity: .4; }
+      .chip {
+        border: 1px solid #ece8e3; background: #fff; border-radius: 999px;
+        padding: 8px 16px; font-size: 14px; font-weight: 500; color: #6b6b76;
+      }
+      .chip-active { background: #0b0b12; color: #fff; border-color: transparent; }
+    </style>
+  </head>
+  <body>
+    <div class="label">Primary / Ghost</div>
+    <div class="row">
+      <button class="btn-primary">Ξ 0.177 ETH 결제하기</button>
+      <button class="btn-ghost">+ 내 물건 팔기</button>
+      <button class="btn-primary btn-disabled">잔액이 부족해요</button>
+    </div>
+
+    <div class="label">Category chips</div>
+    <div class="row">
+      <span class="chip chip-active">🏷️ 전체</span>
+      <span class="chip">💻 디지털기기</span>
+      <span class="chip">🛋️ 가구/인테리어</span>
+      <span class="chip">👟 패션/잡화</span>
+    </div>
+  </body>
+</html>
