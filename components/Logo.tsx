@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 /**
- * 더블디럭스 로고 — 직접 제작한 SVG.
- * 두 개의 겹친 다이아몬드(=Double Deluxe)에 당근 오렌지→크립토 보라 그라데이션.
+ * 더블디럭스 로고 — 포레스트 그린 그라데이션 라운드 사각형 위에
+ * 겹친 두 개의 흰 원("Double"). claude.ai/design의 새 브랜드마크와 일치.
  */
 export function LogoMark({ size = 32 }: { size?: number }) {
   return (
@@ -15,42 +15,29 @@ export function LogoMark({ size = 32 }: { size?: number }) {
       aria-hidden="true"
     >
       <defs>
-        <linearGradient id="dd-grad" x1="4" y1="6" x2="44" y2="42" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#FF6B1A" />
-          <stop offset="0.45" stopColor="#FF8443" />
-          <stop offset="1" stopColor="#7C5CFF" />
+        <linearGradient
+          id="dd-grad"
+          x1="6"
+          y1="6"
+          x2="42"
+          y2="42"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#2F8159" />
+          <stop offset="1" stopColor="#14563A" />
         </linearGradient>
       </defs>
-      {/* 뒤 다이아몬드 */}
-      <rect
-        x="24"
-        y="3"
-        width="22"
-        height="22"
-        rx="6"
-        transform="rotate(45 24 3)"
-        fill="url(#dd-grad)"
-        opacity="0.28"
-      />
-      {/* 앞 다이아몬드 */}
-      <rect
-        x="24"
-        y="9"
-        width="22"
-        height="22"
-        rx="6"
-        transform="rotate(45 24 9)"
-        fill="url(#dd-grad)"
-      />
-      {/* 중앙 D 모노그램 (코인 슬릿 느낌) */}
-      <rect x="21.5" y="20" width="3" height="11" rx="1.5" fill="white" />
-      <path
-        d="M26 20.5c3.6 0 6 2.2 6 5.5s-2.4 5.5-6 5.5"
-        stroke="white"
-        strokeWidth="3"
-        strokeLinecap="round"
+      <rect x="3" y="3" width="42" height="42" rx="13" fill="url(#dd-grad)" />
+      <circle
+        cx="20"
+        cy="26"
+        r="8.5"
         fill="none"
+        stroke="#fff"
+        strokeWidth="3"
+        opacity="0.55"
       />
+      <circle cx="29" cy="26" r="8.5" fill="none" stroke="#fff" strokeWidth="3" />
     </svg>
   );
 }
@@ -58,9 +45,9 @@ export function LogoMark({ size = 32 }: { size?: number }) {
 export function Logo() {
   return (
     <Link href="/" className="flex items-center gap-2.5">
-      <LogoMark size={32} />
-      <span className="text-[19px] font-extrabold tracking-tight">
-        더블<span className="text-gradient">디럭스</span>
+      <LogoMark size={30} />
+      <span className="text-[18px] font-bold tracking-tight text-ink">
+        더블디럭스
       </span>
     </Link>
   );

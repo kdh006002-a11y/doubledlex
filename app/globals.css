@@ -1,15 +1,57 @@
-@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ── 라이트 테마 토큰 (딥 포레스트 그린 / 아이보리) ── */
 :root {
-  --bg: #fbfaf8;
+  --bg: #fcfbf6;
+  --bg-subtle: #f8f6ef;
   --surface: #ffffff;
-  --line: #ece8e3;
-  --text: #0b0b12;
-  --text-muted: #6b6b76;
+  --surface-sunken: #f1eee4;
+  --line: #e7e3d6;
+  --text: #14201a;
+  --text-muted: #66746b;
+
+  --primary: #1b6b47;
+  --primary-hover: #14563a;
+  --primary-soft: #eef5f0;
+  --primary-soft-text: #14563a;
+
+  /* 리퀴드 글래스 */
+  --glass-bg: rgba(255, 255, 255, 0.62);
+  --glass-bg-strong: rgba(255, 255, 255, 0.78);
+  --glass-border: rgba(255, 255, 255, 0.7);
+  --glass-hairline: rgba(20, 32, 26, 0.06);
+  --glass-blur: 20px;
+
+  color-scheme: light;
+}
+
+/* ── 다크 테마 (그린빛 블랙 위 밝은 포레스트) ── */
+[data-theme="dark"],
+.dark {
+  --bg: #060d09;
+  --bg-subtle: #0b1611;
+  --surface: #0b1611;
+  --surface-sunken: #040906;
+  --line: rgba(255, 255, 255, 0.1);
+  --text: #f2f4ee;
+  --text-muted: #8fa298;
+
+  --primary: #3fbe76;
+  --primary-hover: #57ce8c;
+  --primary-soft: rgba(63, 190, 118, 0.14);
+  --primary-soft-text: #7fe0a6;
+
+  --glass-bg: rgba(18, 32, 26, 0.55);
+  --glass-bg-strong: rgba(20, 36, 29, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-hairline: rgba(255, 255, 255, 0.06);
+  --glass-blur: 22px;
+
+  color-scheme: dark;
 }
 
 * {
@@ -23,57 +65,83 @@ html {
 body {
   background-color: var(--bg);
   color: var(--text);
-  font-feature-settings: "cv11", "ss01";
+  font-family: "IBM Plex Sans KR", "IBM Plex Sans", system-ui, -apple-system,
+    "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
 @layer components {
-  /* 브랜드 그라데이션 텍스트 */
+  /* 브랜드 그라데이션 텍스트 (포레스트 그린) */
   .text-gradient {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(120deg, #ff6b1a 0%, #ff8443 35%, #7c5cff 100%);
+    background-image: linear-gradient(120deg, #2f8159 0%, #1b6b47 60%, #14563a 100%);
   }
 
-  /* 유리(글래스) 카드 — 결제 위젯 등 */
+  /* 유리(글래스) 표면 — 헤더/위젯 */
   .glass {
-    background: rgba(255, 255, 255, 0.72);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    background: var(--glass-bg-strong);
+    backdrop-filter: blur(var(--glass-blur)) saturate(1.6);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.6);
   }
 
-  /* 1차 CTA 버튼 */
+  /* 1차 CTA */
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 rounded-2xl bg-brand-gradient px-5 py-3
            font-semibold text-white shadow-glow transition
-           hover:brightness-105 active:scale-[0.98] disabled:cursor-not-allowed
+           hover:brightness-[1.06] active:scale-[0.98] disabled:cursor-not-allowed
            disabled:opacity-40 disabled:shadow-none disabled:brightness-100;
   }
 
   /* 보조 버튼 */
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-2xl border border-[var(--line)]
-           bg-white px-5 py-3 font-semibold text-ink transition hover:bg-brand-50
-           active:scale-[0.98];
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl border px-5 py-3
+           font-semibold transition active:scale-[0.98];
+    border-color: var(--line);
+    background: var(--surface);
+    color: var(--text);
+  }
+  .btn-ghost:hover {
+    background: var(--primary-soft);
+    color: var(--primary-soft-text);
   }
 
   .chip {
-    @apply inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[var(--line)]
-           bg-white px-4 py-2 text-sm font-medium text-ink-muted transition
-           hover:border-brand-300 hover:text-brand-600;
+    @apply inline-flex shrink-0 items-center gap-1.5 rounded-full border px-4 py-2 text-sm
+           font-medium transition;
+    border-color: var(--line);
+    background: var(--surface);
+    color: var(--text-muted);
   }
-
+  .chip:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
   .chip-active {
-    @apply border-transparent bg-ink text-white hover:text-white;
+    background: var(--primary);
+    border-color: transparent;
+    color: #fff;
+  }
+  .chip-active:hover {
+    color: #fff;
   }
 
   .card {
-    @apply rounded-3xl border border-[var(--line)] bg-white shadow-soft;
+    @apply rounded-3xl border shadow-soft;
+    border-color: var(--line);
+    background: var(--surface);
   }
 
-  /* 로딩 스켈레톤용 셰이머 */
+  /* 숫자(코인/지갑/주소)는 모노 + 균등폭 */
+  .tnum {
+    font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* 로딩 셰이머 */
   .shimmer {
-    @apply relative overflow-hidden bg-brand-50;
+    @apply relative overflow-hidden;
+    background: var(--primary-soft);
   }
   .shimmer::after {
     @apply absolute inset-0 -translate-x-full animate-shimmer;
@@ -87,7 +155,7 @@ body {
   }
 }
 
-/* 가로 스크롤 영역에서 스크롤바 숨김 */
+/* 가로 스크롤 영역 스크롤바 숨김 */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }

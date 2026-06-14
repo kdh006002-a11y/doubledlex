@@ -178,14 +178,14 @@ export function PaymentWidget({ product }: { product: Product }) {
         <div className="flex items-center justify-between text-xs text-ink-muted">
           <span>결제 금액</span>
           {mounted && isConnected && balanceFormatted && (
-            <span className="tabular-nums">
+            <span className="font-mono tabular-nums">
               잔액 {Number(balanceFormatted).toFixed(token.isNative ? 4 : 2)}{" "}
               {token.symbol}
             </span>
           )}
         </div>
         <div className="mt-2 flex items-end justify-between">
-          <div className="text-2xl font-extrabold tracking-tight tabular-nums">
+          <div className="font-mono text-2xl font-semibold tracking-tight tabular-nums">
             {formatToken(amount, symbol)}
           </div>
           <div className="rounded-full bg-violetx-500/10 px-3 py-1.5 text-sm font-bold text-violetx-700">

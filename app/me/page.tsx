@@ -75,7 +75,7 @@ export default function MePage() {
               <div className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
                 코인 잔액 합계 (환전 없이 수령)
               </div>
-              <div className="mt-1 text-3xl font-extrabold tracking-tight">
+              <div className="mt-1 font-mono text-3xl font-semibold tracking-tight tabular-nums">
                 ≈ {formatKrw(totalKrw)}
               </div>
             </div>
@@ -186,10 +186,10 @@ function BalanceRow({
         {symbol}
       </span>
       <span className="text-right">
-        <span className="block font-bold tabular-nums">
+        <span className="block font-mono font-semibold tabular-nums">
           {amount.toFixed(symbol === "ETH" ? 4 : 2)}
         </span>
-        <span className="block text-xs text-ink-muted tabular-nums">
+        <span className="block font-mono text-xs text-ink-muted tabular-nums">
           ≈ {formatKrw(krw)}
         </span>
       </span>

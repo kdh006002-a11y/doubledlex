@@ -33,11 +33,13 @@ export function PriceTag({
 
   return (
     <div className="flex flex-col">
-      <span className={`font-extrabold tracking-tight ${KRW_SIZE[size]}`}>
+      <span
+        className={`font-mono font-semibold tracking-tight tabular-nums ${KRW_SIZE[size]}`}
+      >
         {formatKrw(krw)}
       </span>
       <span
-        className={`mt-0.5 inline-flex items-center gap-1 font-semibold text-violetx-600 ${COIN_SIZE[size]}`}
+        className={`mt-0.5 inline-flex items-center gap-1 font-mono font-medium tabular-nums text-[var(--primary)] ${COIN_SIZE[size]}`}
       >
         <span aria-hidden>{token.emoji}</span>
         {formatToken(coinAmount, symbol)}
