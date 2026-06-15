@@ -1,182 +1,165 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useMyProfile, useProfiles } from "@/lib/profileStore";
-import { useListings } from "@/lib/listingStore";
-import { useMounted } from "@/lib/useMounted";
-import { MapPicker } from "@/components/MapPicker";
-import { MannerTemp } from "@/components/MannerTemp";
-import { ListingCard } from "@/components/ListingCard";
-import { DEFAULT_CENTER } from "@/lib/seed";
-import type { LatLng } from "@/lib/types";
-
-const AVATARS = ["🥕", "🐰", "🐱", "🐶", "🦊", "🐻", "🐼", "🐧", "🦁", "🐸"];
+import { useEffect, useState } from "react";
+import { useAccount } from "wagmi";
+import { shortAddress } from "@/lib/format";
+import { addressExplorerUrl } from "@/lib/payment";
+import { getProfile, type Profile } from "@/lib/profile";
+import { ConnectWallet } from "@/components/ConnectWallet";
+import { ProfileForm } from "@/components/ProfileForm";
+import { MannerTemperature } from "@/components/MannerTemperature";
 
 export default function ProfilePage() {
-  const mounted = useMounted();
-  const { address, isConnected, profile } = useMyProfile();
-  const upsert = useProfiles((s) => s.upsert);
-  const listings = useListings((s) => s.listings);
+  const [mounted, setMounted] = useState(false);
+  const [profile, setProfile] = useState<Profile | undefined>(undefined);
+  const [editing, setEditing] = useState(false);
+  const { address, isConnected } = useAccount();
 
-  const [nickname, setNickname] = useState("");
-  const [neighborhood, setNeighborhood] = useState("");
-  const [location, setLocation] = useState<LatLng | null>(null);
-  const [avatar, setAvatar] = useState(AVATARS[0]);
-  const [saved, setSaved] = useState(false);
-
-  // Load existing profile into the form.
   useEffect(() => {
-    if (profile) {
-      setNickname(profile.nickname);
-      setNeighborhood(profile.neighborhood);
-      setLocation(profile.location);
-      setAvatar(profile.avatar);
-    }
-  }, [profile]);
+    setMounted(true);
+  }, []);
 
+  // 지갑 주소가 바뀌면 해당 프로필을 다시 읽는다
+  useEffect(() => {
+    if (mounted && address) setProfile(getProfile(address));
+  }, [mounted, address]);
+
+  // 1) 마운트 전 / 지갑 미연결
   if (!mounted) {
-    return <div className="py-20 text-center text-sm text-gray-400">불러오는 중…</div>;
+    return <Centered>불러오는 중…</Centered>;
   }
 
   if (!isConnected || !address) {
     return (
-      <div className="rounded-xl border border-gray-200 bg-white p-8 text-center">
-        <p className="mb-4 text-2xl">🥕</p>
-        <p className="mb-1 font-bold">지갑으로 로그인하세요</p>
-        <p className="mb-5 text-sm text-gray-500">
-          이 데모에서는 지갑 주소가 곧 계정이에요.
+      <div className="mx-auto max-w-md px-4 py-24 text-center sm:px-6">
+        <div className="mx-auto grid h-16 w-16 place-items-center rounded-3xl bg-brand-50 text-3xl">
+          🥕
+        </div>
+        <h1 className="mt-5 text-2xl font-extrabold">내 프로필</h1>
+        <p className="mt-2 text-ink-muted">
+          지갑을 연결하면 우리 동네 프로필을 만들 수 있어요.
         </p>
-        <div className="flex justify-center">
-          <ConnectButton showBalance={false} />
+        <div className="mt-6 flex justify-center">
+          <ConnectWallet />
         </div>
       </div>
     );
   }
 
-  const myListings = listings.filter(
-    (l) => l.sellerAddress === address.toLowerCase()
-  );
+  // 2) 연결됐지만 프로필 없음 → 계정 만들기
+  if (!profile || editing) {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6">
+        <h1 className="text-3xl font-extrabold tracking-tight">
+          {profile ? "프로필 수정" : "계정 만들기"}
+        </h1>
+        <p className="mt-2 text-ink-muted">
+          {profile
+            ? "닉네임과 동네를 바꿀 수 있어요."
+            : "닉네임과 동네를 정하면 이웃과 채팅하고 거래할 수 있어요."}
+        </p>
 
-  function save() {
-    if (!address) return;
-    if (!nickname.trim()) {
-      alert("닉네임을 입력해 주세요");
-      return;
-    }
-    if (!location) {
-      alert("지도에서 내 동네 위치를 선택해 주세요");
-      return;
-    }
-    upsert({
-      address,
-      nickname: nickname.trim(),
-      neighborhood: neighborhood.trim() || "우리동네",
-      location,
-      avatar,
-      mannerTemp: profile?.mannerTemp ?? 36.5,
-      createdAt: profile?.createdAt ?? Date.now(),
-    });
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+        <div className="mt-4 flex items-center gap-2 rounded-2xl bg-[var(--surface-sunken)] px-4 py-3 text-sm">
+          <span className="text-ink-muted">연결된 지갑</span>
+          <span className="tnum font-semibold">{shortAddress(address)}</span>
+        </div>
+
+        <div className="mt-8">
+          <ProfileForm
+            address={address}
+            initial={profile}
+            onSaved={(p) => {
+              setProfile(p);
+              setEditing(false);
+            }}
+            onCancel={profile ? () => setEditing(false) : undefined}
+          />
+        </div>
+      </div>
+    );
   }
 
+  // 3) 프로필 카드
   return (
-    <div className="space-y-6">
-      <h1 className="text-xl font-bold">나의 당근</h1>
-
-      <section className="space-y-4 rounded-xl border border-gray-200 bg-white p-5">
-        <div className="flex items-center gap-3">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-orange-50 text-3xl">
-            {avatar}
+    <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6">
+      <div className="overflow-hidden rounded-3xl bg-brand-gradient p-[1.5px] shadow-glow">
+        <div className="rounded-[calc(1.5rem-1.5px)] bg-white p-6">
+          <div className="flex items-center gap-4">
+            <div className="grid h-20 w-20 place-items-center rounded-3xl bg-gradient-to-br from-brand-100 to-violetx-400/30 text-4xl">
+              {profile.avatarEmoji}
+            </div>
+            <div className="min-w-0 flex-1">
+              <h1 className="truncate text-2xl font-extrabold tracking-tight">
+                {profile.nickname}
+              </h1>
+              <p className="mt-0.5 text-sm text-ink-muted">📍 {profile.neighborhood}</p>
+            </div>
+            <button
+              onClick={() => setEditing(true)}
+              className="btn-ghost !py-2 !px-4 text-sm"
+            >
+              수정
+            </button>
           </div>
-          <div>
-            <p className="font-bold">{profile?.nickname ?? "프로필을 만들어주세요"}</p>
-            <p className="text-xs text-gray-400">
-              {address.slice(0, 6)}…{address.slice(-4)}
+
+          {profile.bio && (
+            <p className="mt-4 whitespace-pre-line text-sm leading-relaxed text-ink">
+              {profile.bio}
             </p>
-            <MannerTemp temp={profile?.mannerTemp ?? 36.5} />
+          )}
+
+          <div className="mt-5 border-t border-[var(--line)] pt-5">
+            <div className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
+              매너온도
+            </div>
+            <div className="mt-2">
+              <MannerTemperature temp={profile.mannerTemp} />
+            </div>
           </div>
-        </div>
 
-        <div>
-          <label className="mb-1 block text-sm font-medium">아바타</label>
-          <div className="flex flex-wrap gap-2">
-            {AVATARS.map((a) => (
-              <button
-                key={a}
-                onClick={() => setAvatar(a)}
-                className={`flex h-10 w-10 items-center justify-center rounded-full text-xl ${
-                  avatar === a ? "bg-brand/15 ring-2 ring-brand" : "bg-gray-50"
-                }`}
-              >
-                {a}
-              </button>
-            ))}
-          </div>
-        </div>
+          {profile.badges.length > 0 && (
+            <div className="mt-5 flex flex-wrap gap-2">
+              {profile.badges.map((b) => (
+                <span
+                  key={b}
+                  className="rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700"
+                >
+                  🏅 {b}
+                </span>
+              ))}
+            </div>
+          )}
 
-        <div>
-          <label className="mb-1 block text-sm font-medium">닉네임</label>
-          <input
-            value={nickname}
-            onChange={(e) => setNickname(e.target.value)}
-            placeholder="예: 역삼동주민"
-            maxLength={20}
-            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-brand"
-          />
+          <a
+            href={addressExplorerUrl(address)}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold tabular-nums text-ink-muted transition hover:text-brand-600"
+          >
+            {shortAddress(address)} ↗
+          </a>
         </div>
+      </div>
 
-        <div>
-          <label className="mb-1 block text-sm font-medium">동네 이름</label>
-          <input
-            value={neighborhood}
-            onChange={(e) => setNeighborhood(e.target.value)}
-            placeholder="예: 역삼동"
-            maxLength={20}
-            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-brand"
-          />
-        </div>
+      <div className="mt-6 grid gap-3 sm:grid-cols-2">
+        <Link href="/me" className="btn-ghost !justify-between">
+          <span>내 지갑 · 판매 상품</span>
+          <span aria-hidden>→</span>
+        </Link>
+        <Link href="/chat" className="btn-ghost !justify-between">
+          <span>채팅 보기</span>
+          <span aria-hidden>→</span>
+        </Link>
+      </div>
+    </div>
+  );
+}
 
-        <div>
-          <label className="mb-1 block text-sm font-medium">내 동네 위치</label>
-          <MapPicker
-            value={location}
-            onChange={setLocation}
-            defaultCenter={DEFAULT_CENTER}
-          />
-        </div>
-
-        <button
-          onClick={save}
-          className="w-full rounded-lg bg-brand py-3 font-bold text-white transition hover:bg-brand-dark"
-        >
-          {saved ? "✅ 저장됐어요" : profile ? "프로필 저장" : "프로필 만들기"}
-        </button>
-      </section>
-
-      <section>
-        <div className="mb-2 flex items-center justify-between">
-          <h2 className="font-bold">나의 판매내역 ({myListings.length})</h2>
-          <Link href="/new" className="text-sm font-medium text-brand">
-            + 글쓰기
-          </Link>
-        </div>
-        {myListings.length === 0 ? (
-          <p className="rounded-xl border border-gray-200 bg-white py-10 text-center text-sm text-gray-400">
-            아직 등록한 물건이 없어요.
-          </p>
-        ) : (
-          <ul className="rounded-xl border border-gray-200 bg-white px-4">
-            {myListings.map((l) => (
-              <li key={l.id}>
-                <ListingCard listing={l} />
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+function Centered({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="mx-auto max-w-md px-4 py-24 text-center text-ink-muted sm:px-6">
+      {children}
     </div>
   );
 }

@@ -1,47 +1,45 @@
-"use client";
-
-import type { Product } from "@/lib/products";
-import { useCart } from "@/lib/store";
+import Link from "next/link";
+import type { Product } from "@/lib/types";
+import { timeAgo } from "@/lib/format";
+import { ProductImage } from "./ProductImage";
+import { PriceTag } from "./PriceTag";
 
 export function ProductCard({ product }: { product: Product }) {
-  const add = useCart((s) => s.add);
-  const open = useCart((s) => s.open);
-
   return (
-    <div className="group flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white transition hover:shadow-md">
-      <div className="flex h-44 items-center justify-center bg-gray-50 text-7xl">
-        {product.image}
+    <Link
+      href={`/products/${product.id}`}
+      className="group flex flex-col overflow-hidden rounded-3xl border border-[var(--line)] bg-white shadow-soft transition hover:-translate-y-1 hover:shadow-card"
+    >
+      <div className="relative aspect-square">
+        <ProductImage
+          src={product.image}
+          emoji={product.emoji}
+          seed={product.id}
+          className="h-full w-full transition duration-300 group-hover:scale-[1.03]"
+        />
+        <span className="absolute left-3 top-3 rounded-full bg-black/55 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
+          {product.condition}
+        </span>
       </div>
-      <div className="flex flex-1 flex-col p-3">
-        <p className="line-clamp-2 text-sm text-gray-800">{product.name}</p>
 
-        <div className="mt-2 flex items-baseline gap-1">
-          <span className="text-lg font-bold text-btc">
-            ₿ {product.priceBtc}
-          </span>
+      <div className="flex flex-1 flex-col p-4">
+        <span className="text-[11px] font-medium text-ink-muted">
+          {product.location} ·{" "}
+          <span suppressHydrationWarning>{timeAgo(product.createdAt)}</span>
+        </span>
+        <h3 className="mt-1 line-clamp-2 min-h-[2.6em] text-sm font-semibold leading-snug text-ink">
+          {product.title}
+        </h3>
+
+        <div className="mt-auto pt-3">
+          <PriceTag krw={product.priceKrw} size="md" />
         </div>
 
-        <div className="mt-1 flex items-center gap-1 text-xs text-gray-500">
-          <span className="text-yellow-500">★ {product.rating}</span>
-          <span>({product.reviews.toLocaleString()})</span>
+        <div className="mt-3 flex items-center gap-3 border-t border-[var(--line)] pt-3 text-xs text-ink-muted">
+          <span className="inline-flex items-center gap-1">♡ {product.likes}</span>
+          <span className="inline-flex items-center gap-1">💬 {product.chats}</span>
         </div>
-
-        {product.rocket && (
-          <span className="mt-2 inline-flex w-fit items-center gap-1 rounded bg-blue-50 px-1.5 py-0.5 text-xs font-bold text-blue-600">
-            🚀 로켓배송
-          </span>
-        )}
-
-        <button
-          onClick={() => {
-            add(product);
-            open();
-          }}
-          className="mt-3 rounded-md bg-brand py-2 text-sm font-bold text-white transition hover:bg-brand-dark"
-        >
-          담기
-        </button>
       </div>
-    </div>
+    </Link>
   );
 }

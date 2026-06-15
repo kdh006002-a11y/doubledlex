@@ -1,37 +1,24 @@
-"use client";
-
-import { useState } from "react";
-import { PRODUCTS, CATEGORIES } from "@/lib/products";
+import type { Product } from "@/lib/types";
 import { ProductCard } from "./ProductCard";
 
-export function ProductGrid() {
-  const [cat, setCat] = useState("전체");
-  const items =
-    cat === "전체" ? PRODUCTS : PRODUCTS.filter((p) => p.category === cat);
+export function ProductGrid({ products }: { products: Product[] }) {
+  if (products.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-[var(--line)] py-20 text-center">
+        <span className="text-4xl">🔍</span>
+        <p className="mt-3 font-semibold text-ink">조건에 맞는 상품이 없어요</p>
+        <p className="mt-1 text-sm text-ink-muted">
+          다른 카테고리나 검색어로 찾아보세요.
+        </p>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <div className="mb-5 flex flex-wrap gap-2">
-        {CATEGORIES.map((c) => (
-          <button
-            key={c}
-            onClick={() => setCat(c)}
-            className={`rounded-full border px-4 py-1.5 text-sm transition ${
-              cat === c
-                ? "border-brand bg-brand text-white"
-                : "border-gray-300 bg-white text-gray-700 hover:border-brand"
-            }`}
-          >
-            {c}
-          </button>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-        {items.map((p) => (
-          <ProductCard key={p.id} product={p} />
-        ))}
-      </div>
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+      {products.map((p) => (
+        <ProductCard key={p.id} product={p} />
+      ))}
     </div>
   );
 }

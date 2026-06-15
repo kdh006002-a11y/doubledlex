@@ -1,114 +1,187 @@
-# BTC 당근 — 동네 비트코인 중고거래 (데모)
+# 더블디럭스 (Double Deluxe) 🥕Ξ
 
-당근마켓 스타일의 동네 기반 중고거래 웹앱입니다. 지갑을 연결해 **계정**을 만들고,
-**사진을 올려 글을 쓰고**, 판매자와 **채팅**하고, **지도**에서 거래 위치를 확인합니다.
-가격은 **BTC**로 표시되고, 결제는 Uniswap 라우터를 통해 판매자 지갑으로 전달됩니다.
+> **현금화 없이, 가스비·거래소 수수료 없이.** 보유한 코인 그대로 우리 동네 중고 물건을 사고팔아요.
+> 판매자는 거래소·환전 없이 코인을 **쉽고 저렴하게 바로** 받습니다.
 
-> 학습/데모용 프로젝트입니다. 백엔드 없이 **브라우저(localStorage + IndexedDB)** 에만
-> 데이터를 저장합니다. 따라서 데이터는 기기/브라우저별로만 유지되고, 채팅은 한 브라우저
-> 안에서 동작하는 **로컬 시뮬레이션**입니다(실서비스는 서버가 필요 — 아래 "한계" 참고).
+당근마켓 스타일의 동네 중고거래 UX에 **암호화폐 결제**를 얹은 마켓플레이스입니다.
+결제 위젯은 **Uniswap 인터페이스의 지갑 연결·트랜잭션 패턴**(wagmi/viem)을 참조했습니다.
 
-## 주요 기능
+---
 
-- 🥕 **계정 = 지갑 연결** — RainbowKit으로 지갑을 연결하면 그 주소가 계정. 닉네임·동네·아바타·매너온도 프로필.
-- 🛒 **중고거래 피드** — 동네 물건 목록, 카테고리 필터, 검색, 판매중/예약중/거래완료 상태, 끌어올리기(끌올), 찜(관심).
-- 📷 **사진 업로드** — 여러 장 업로드(자동 리사이즈), 대표 이미지 지정. IndexedDB에 저장.
-- 🗺️ **지도** — Leaflet + OpenStreetMap(무료, API 키 불필요). 피드 지도 보기 + 글쓰기 시 거래 위치 선택 + 현재 위치.
-- 💬 **채팅** — 물건별 1:1 대화. (데모라 상대방 응답은 자동 시뮬레이션)
-- ₿ **BTC 결제** — 구매 시 판매자 지갑으로 송금. ETH/USDC 보유자는 Uniswap `exactOutputSingle`로 정확한 BTC를 스왑해 전달.
+## 왜 만들었나 (핵심 가치)
 
-## 기술 스택
+오늘날 코인으로 실생활 소비를 하려면 보통 이렇게 합니다:
 
-- **Next.js 14** (App Router) + **TypeScript** + **Tailwind CSS**
-- **wagmi v2 + viem v2 + RainbowKit** — 지갑 연결 / 트랜잭션
-- **zustand (+persist)** — 프로필 / 리스팅 / 채팅 상태 (localStorage)
-- **IndexedDB** — 업로드 사진 저장 (`lib/idb.ts`)
-- **Leaflet + OpenStreetMap** — 지도 (`components/MapView.tsx`, `MapPicker.tsx`)
-- **Uniswap v3 SwapRouter02 / QuoterV2** — BTC 결제 라우팅 (`lib/payment.ts`)
+> 바이낸스에서 수익 실현 → 개인 지갑 전송 → 업비트·빗썸 입금 → **가스비 + 수수료** → 원화 출금 → 그제서야 소비
 
-## 실행 방법
+더블디럭스는 이 6단계를 **단 1단계**로 줄입니다:
 
-> ⚠️ 의존성 설치/실행은 **직접** 터미널에서 하세요. (`leaflet`이 추가되었습니다)
+> **보유 코인 → 바로 결제 ✓**
 
-```powershell
-cd C:\path\to\btc-coupang
+- 구매자: 현금화 과정을 통째로 건너뛰고 코인 그대로 결제
+- 판매자: 환전 없이 코인을 자기 지갑으로 즉시 수령
+
+---
+
+## 빠른 시작
+
+> ℹ️ 이 프로젝트는 코드가 모두 작성된 상태로 전달됩니다. 아래 두 줄만 실행하면 됩니다.
+
+```bash
 npm install
-copy .env.local.example .env.local   # 그리고 값 채우기
 npm run dev
 ```
 
-브라우저에서 http://localhost:3000 접속 → 우측 상단 지갑 연결 → `나의 당근`에서 프로필 생성 →
-`글쓰기`로 물건 등록(사진/지도) → 다른 물건에서 `채팅하기` / `구매`.
+→ 브라우저에서 **http://localhost:3000** 접속.
 
-## 설정해야 할 값 (`.env.local`)
+요구사항: **Node.js 18.18 이상**.
 
-| 변수 | 설명 |
-|------|------|
-| `NEXT_PUBLIC_WC_PROJECT_ID` | WalletConnect Cloud 무료 프로젝트 ID |
-| `NEXT_PUBLIC_BTC_TOKEN` | WBTC/cbBTC 토큰 주소 (8 decimals) |
-| `NEXT_PUBLIC_SWAP_ROUTER` / `NEXT_PUBLIC_QUOTER` | Uniswap 라우터/쿼터 주소 |
-| `NEXT_PUBLIC_WETH` / `NEXT_PUBLIC_USDC` | 결제용 입력 토큰 주소 |
-| `NEXT_PUBLIC_MERCHANT_ADDRESS` | (선택) 기본 수취 주소. 글쓰기 거래는 판매자 지갑으로 가지만, 미지정 시 폴백 |
+### 지갑 / 테스트넷 준비 (결제를 실제로 해보려면)
 
-`lib/payment.ts`의 기본값은 **Base 메인넷** 주소입니다. 개발은 **Base Sepolia 테스트넷**을
-권장하며, 위 환경변수로 덮어쓰면 됩니다.
+1. **MetaMask** 설치 → 네트워크를 **Sepolia 테스트넷**으로 전환
+   (앱의 "지갑 연결" 후 잘못된 네트워크면 전환 버튼이 자동으로 떠요)
+2. **테스트 ETH** 받기 (무료 faucet):
+   - https://sepoliafaucet.com
+   - https://www.alchemy.com/faucets/ethereum-sepolia
+3. 상품 상세 페이지 → **코인으로 결제** 위젯에서 결제
 
-## ⚠️ 주의
+> ⚠️ **Sepolia 테스트넷**에서 동작합니다. 실제 자산이 아닙니다.
 
-- **반드시 테스트넷(Base Sepolia)부터** 시작하세요. 실제 자금 손실 위험.
-- **시드(데모) 물건**의 판매자는 가짜 주소(`0x1111…`, `0x2222…`)입니다. 이 물건을 "구매"하면
-  해당 주소로 실제 송금되니, 결제 흐름은 **내가 직접 올린 글**이나 테스트넷에서만 시험하세요.
-- 채팅/계정/사진은 **브라우저에만** 저장됩니다. 캐시 삭제 시 사라집니다.
-- 프로덕션 전 스마트컨트랙트 상호작용/슬리피지/승인 한도 **보안 검토** 필요.
+---
 
-## 폴더 구조
+## GitHub에서 실행하기
 
-```
-app/
-  layout.tsx              앱 셸 (Providers + Header + BottomNav)
-  page.tsx                홈 피드 (목록/지도 토글, 검색, 카테고리)
-  new/page.tsx            글쓰기 (사진 업로드 + 지도 위치)
-  listing/[id]/page.tsx   상품 상세 (갤러리·판매자·지도·찜·채팅·구매)
-  chat/page.tsx           채팅 (대화 목록 + 대화방)
-  profile/page.tsx        나의 당근 (프로필/동네 설정 + 판매내역)
-  providers.tsx           wagmi / RainbowKit / react-query
-components/
-  Header.tsx, BottomNav.tsx
-  ListingCard.tsx, MannerTemp.tsx
-  PhotoUploader.tsx, Photo.tsx        사진 업로드/표시 (IndexedDB)
-  MapView.tsx, MapPicker.tsx          Leaflet 지도
-  ChatPanel.tsx                       채팅 UI
-  CheckoutButton.tsx                  BTC 결제 (판매자에게 송금)
-lib/
-  types.ts                도메인 타입
-  idb.ts                  IndexedDB 사진 저장
-  profileStore.ts         계정/프로필 (zustand)
-  listingStore.ts         중고거래 글 (zustand)
-  chatStore.ts            채팅 (zustand)
-  seed.ts                 데모 데이터 / 카테고리 / 기본 동네
-  geo.ts, time.ts, useMounted.ts      유틸
-  wagmi.ts, payment.ts    체인 설정 / Uniswap 결제
+이 앱은 지갑 연결·localStorage 등 **전부 클라이언트 사이드**라 서버 없이 정적 호스팅으로 완전히 동작합니다. 그래서 **GitHub Pages**에 무료로 띄울 수 있어요. (정적 export 설정 + 자동 배포 워크플로우가 이미 들어 있습니다.)
+
+### 방법 A — GitHub Pages (라이브 URL, 추천)
+
+> ⚠️ 이 환경에선 git 실행이 막혀 있어 제가 push까지 못 합니다. 아래 명령은 **직접** 실행하세요.
+
+```bash
+cd C:\Users\CKIRUser\double-deluxe
+git init
+git add .
+git commit -m "더블디럭스 초기 커밋"
+git branch -M main
+
+# 1) GitHub에 빈 저장소를 먼저 만든다 (이름: double-deluxe)
+#    - 웹: github.com/new  또는
+#    - gh CLI: gh repo create double-deluxe --public --source=. --remote=origin
+
+# 2) 원격 연결 후 푸시 (<USERNAME>을 본인 계정으로)
+git remote add origin https://github.com/<USERNAME>/double-deluxe.git
+git push -u origin main
 ```
 
-### 레거시 파일 (삭제 가능)
+그다음 GitHub 저장소에서:
 
-기존 "BTC 쿠팡(장바구니 쇼핑몰)" 잔재로, 현재 앱에서는 **사용하지 않습니다**.
-원하면 삭제하세요(빌드에는 영향 없음):
+1. **Settings → Pages → Build and deployment → Source 를 "GitHub Actions"로** 설정
+2. push할 때마다 `.github/workflows/deploy.yml`이 빌드·배포합니다 (Actions 탭에서 진행 확인)
+3. 완료되면 주소: **`https://<USERNAME>.github.io/double-deluxe/`**
 
-```powershell
-git rm components/CartDrawer.tsx components/ProductGrid.tsx components/ProductCard.tsx lib/store.ts lib/products.ts
+> 저장소 이름이 `double-deluxe`가 아니어도 워크플로우가 자동으로 경로(basePath)를 맞춥니다.
+> 단, `<USERNAME>.github.io` 같은 **사용자 사이트** 저장소라면 워크플로우의 `NEXT_PUBLIC_BASE_PATH` 줄을 빈 값으로 바꾸세요.
+
+### 방법 B — GitHub Codespaces (브라우저에서 dev 서버)
+
+저장소 페이지에서 **Code ▸ Codespaces ▸ Create codespace** → 컨테이너가 뜨면(`.devcontainer` 포함) 자동으로 `npm install` 후:
+
+```bash
+npm run dev
 ```
 
-## 한계 (데모이기 때문)
+→ 포트 3000이 자동 포워딩되어 브라우저 미리보기로 바로 확인됩니다.
 
-- 백엔드가 없어 **여러 기기/사용자 간 데이터 공유 불가**. 채팅 상대 응답은 자동 시뮬레이션.
-- 실제 멀티유저 서비스로 만들려면 인증·DB·실시간 채팅·사진 스토리지(예: Supabase/Firebase)가 필요합니다.
+---
 
-## 다음 단계 (로드맵)
+## 주요 기능
 
-1. 백엔드 연동(Supabase 등) — 실제 회원/실시간 채팅/사진 영속화
-2. 동네 인증 / 반경 기반 "내 근처" 정렬 강화
-3. 리뷰·매너온도 실제 반영, 거래 후기
-4. 가격 오라클 연동 (BTC↔법정화폐 표기)
-5. 스마트컨트랙트 보안 검토 후 메인넷 전환
+| 화면 | 설명 |
+| --- | --- |
+| **홈** `/` | 가치제안 히어로(기존 6단계 vs 더블디럭스 1단계 시각화), 카테고리 필터, 상품 그리드 |
+| **상품 상세** `/products/[id]` | 상품 정보 + **Uniswap식 결제 위젯** + **수수료 절약 비교 카드** |
+| **판매하기** `/sell` | 등록 폼 (원화 입력 → 코인 가격 자동 환산, 수취 지갑 자동 채움) |
+| **내 지갑** `/me` | 받은 코인 잔액(ETH·USDC) + 판매 중인 상품 |
+| **내 근처** `/map` | 동네별 상품을 지도(Leaflet + OpenStreetMap)에서 보기 — 당근 "내 근처" 참조 |
+| **채팅** `/chat`, `/chat/[id]` | 상품별 1:1 채팅 + 빠른답변·안전거래 가이드 (판매자 자동응답 데모) |
+| **내 프로필** `/profile` | 지갑 연결 + 로컬 프로필(닉네임·동네·매너온도 36.5°C) — 당근 프로필 참조 |
+
+- **가격은 코인 + 원화 동시 표기** — 가치를 직관적으로
+- **수수료 투명성** — 거래소 출금 대비 절약 금액을 결제 화면에서 바로 표시
+- **당근마켓 레퍼런스** — 1:1 채팅·매너온도·동네/내 근처·프로필을 정적(서버 없이 localStorage)으로 재현
+
+### 당근 스타일 기능 (전부 클라이언트 사이드)
+
+- **채팅** `lib/chat.ts` — 상품당 1스레드(thread id = 상품 id)로 localStorage 보관. 게이트: 지갑 연결 + 동네 프로필이 있어야 채팅(당근 동네 인증 대응). 판매자 응답은 `setTimeout`으로 시뮬레이션.
+- **내 근처(지도)** `components/NeighborhoodMap.tsx` — react-leaflet은 `next/dynamic({ ssr:false })`로만 로드(정적 export 안전). 좌표는 `lib/geo.ts`가 상품 location 문자열에서 파생 → 시드 데이터 무수정.
+- **프로필/매너온도** `lib/profile.ts` — 지갑 주소를 키로 저장. 시드 판매자는 주소 해시로 결정적 매너온도를 만들어 화면을 채움.
+
+---
+
+## 기술 스택
+
+- **Next.js 14 (App Router) + TypeScript**
+- **Tailwind CSS** — 디자인 토큰/시스템
+- **wagmi v2 + viem** — 지갑·체인·트랜잭션 (Uniswap이 쓰는 스택)
+- **@tanstack/react-query** — wagmi 데이터 레이어
+- **Leaflet + react-leaflet + OpenStreetMap** — 내 근처 지도 (API 키 불필요, GitHub Pages에서 바로 동작)
+- 지갑 연결: **injected(MetaMask)** — 외부 API 키 불필요
+
+### 결제 동작 (Uniswap 참조)
+
+`components/PaymentWidget.tsx`의 단일 버튼 상태머신:
+
 ```
+지갑 연결 → (Sepolia 전환) → (잔액 부족) → 결제하기
+        → 지갑에서 승인 → 결제 확인 중 → 결제 완료 ✓ (Etherscan 링크)
+```
+
+- 네이티브 **ETH**: `useSendTransaction` → 판매자 주소로 직접 송금
+- **USDC(ERC20)**: `useWriteContract` → `transfer(판매자, 금액)`
+- `useWaitForTransactionReceipt`로 컨펌 대기
+
+---
+
+## 프로젝트 구조
+
+```
+double-deluxe/
+├─ app/
+│  ├─ layout.tsx · providers.tsx · globals.css
+│  ├─ page.tsx                 # 홈 (Hero + ValueProps + Marketplace)
+│  ├─ products/[id]/page.tsx   # 상품 상세 + 결제 + 채팅 진입
+│  ├─ sell/page.tsx            # 판매 등록
+│  ├─ me/page.tsx              # 판매자 대시보드
+│  ├─ profile/page.tsx         # 계정 만들기 / 프로필 (매너온도)
+│  ├─ map/page.tsx             # 내 근처 (Leaflet 지도)
+│  └─ chat/page.tsx · chat/[id]/page.tsx   # 채팅 목록 / 채팅방
+├─ components/                 # Header, PaymentWidget, NeighborhoodMap, ChatRoom, ProfileForm, MannerTemperature, MobileTabBar, ...
+├─ lib/                        # ... + chat.ts · profile.ts · geo.ts
+│  ├─ wagmi.ts                 # 체인/커넥터 (여기만 바꾸면 L2 전환)
+│  ├─ tokens.ts · price.ts · payment.ts · format.ts
+│  └─ products.ts              # 목업 상품 데이터
+└─ design-system/              # claude.ai/design 동기화용 프리뷰 카드
+```
+
+---
+
+## 디자인
+
+- **로고**: 직접 제작한 SVG (`components/Logo.tsx`) — 두 개의 겹친 다이아몬드(=Double Deluxe), 오렌지→보라 그라데이션
+- **상품 이미지**: 카테고리별 그라데이션 + 이모지로 **우아하게 폴백**하도록 설계.
+  실제 이미지를 넣으려면 `lib/products.ts`의 각 상품 `image`에 URL을 채우면 됩니다.
+  (`next.config.mjs`의 `images.remotePatterns`에 일반 CDN이 이미 허용돼 있어요.)
+- **claude.ai/design**: 브랜드·타이포·버튼·상품카드·결제위젯 프리뷰를
+  "더블디럭스 Design System" 프로젝트로 동기화했습니다 (`design-system/`).
+
+> 참고: 이미지 자동 생성(Higgsfield MCP)은 작성 시점 환경에서 연동이 일시적으로 막혀 있어,
+> 위와 같이 원격 URL을 받을 수 있는 구조로 배선해두고 폴백 비주얼로 완성했습니다.
+
+---
+
+## 프로덕션으로 갈 때 (낮은 수수료가 핵심 가치)
+
+`lib/wagmi.ts`의 `chains`만 저가 L2(**Base / Arbitrum / Polygon**)로 바꾸면
+결제 레이어 전체가 그대로 따라갑니다. `lib/tokens.ts`의 토큰 주소도 해당 체인 기준으로 교체하세요.
+
+다음 단계 후보: 에스크로 컨트랙트(거래 보호), 가격 오라클(`lib/price.ts` 환율 대체), 백엔드 연동(현재 등록 상품은 localStorage 데모).

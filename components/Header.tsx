@@ -1,39 +1,63 @@
 "use client";
 
 import Link from "next/link";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { usePathname } from "next/navigation";
+import { Logo } from "./Logo";
+import { ConnectWallet } from "./ConnectWallet";
+
+const NAV = [
+  { href: "/", label: "홈" },
+  { href: "/map", label: "내 근처" },
+  { href: "/chat", label: "채팅" },
+  { href: "/sell", label: "판매하기" },
+  { href: "/me", label: "내 지갑" },
+];
 
 export function Header() {
-  return (
-    <header className="sticky top-0 z-40 border-b border-gray-200 bg-white">
-      <div className="mx-auto flex w-full max-w-[1180px] items-center gap-4 px-4 py-3">
-        <Link href="/" className="flex items-center gap-1 text-2xl font-extrabold">
-          <span className="text-brand">BTC</span>
-          <span className="text-gray-900">당근</span>
-          <span className="ml-0.5 text-btc">🥕</span>
-        </Link>
+  const pathname = usePathname();
 
-        <nav className="ml-4 hidden items-center gap-4 text-sm font-medium text-gray-600 md:flex">
-          <Link href="/" className="hover:text-brand">
-            홈
-          </Link>
-          <Link href="/new" className="hover:text-brand">
-            글쓰기
-          </Link>
-          <Link href="/chat" className="hover:text-brand">
-            채팅
-          </Link>
-          <Link href="/profile" className="hover:text-brand">
-            나의 당근
-          </Link>
+  return (
+    <header className="sticky top-0 z-40 border-b border-[var(--line)] glass">
+      <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-4 sm:px-6">
+        <Logo />
+
+        <nav className="ml-2 hidden items-center gap-1 md:flex">
+          {NAV.map((item) => {
+            const active =
+              item.href === "/"
+                ? pathname === "/"
+                : pathname.startsWith(item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`rounded-xl px-3 py-2 text-sm font-semibold transition ${
+                  active
+                    ? "bg-brand-50 text-brand-700"
+                    : "text-ink-muted hover:bg-brand-50/60 hover:text-ink"
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
 
-        <div className="ml-auto flex items-center gap-3">
-          <ConnectButton
-            showBalance={false}
-            accountStatus="avatar"
-            chainStatus="icon"
-          />
+        <div className="flex flex-1 items-center justify-end gap-2">
+          <Link
+            href="/profile"
+            className="hidden btn-ghost !py-2.5 !px-3 text-sm md:inline-flex"
+            aria-label="내 프로필"
+          >
+            🥕 프로필
+          </Link>
+          <Link
+            href="/sell"
+            className="hidden btn-ghost !py-2.5 !px-4 text-sm sm:inline-flex"
+          >
+            + 내 물건 팔기
+          </Link>
+          <ConnectWallet />
         </div>
       </div>
     </header>
